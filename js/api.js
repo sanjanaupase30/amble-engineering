@@ -1,52 +1,52 @@
-// API Base URL
-const API_URL = window.location.origin; // Automatically uses current domain
+// API Client for Amble Engineering
+const API_BASE = ''; // Empty = same domain (works on localhost AND render)
 
-// Helper for API calls
 async function api(endpoint, options = {}) {
-    const url = `${API_URL}${endpoint}`;
-    const response = await fetch(url, {
+    const url = `${API_BASE}${endpoint}`;
+    const opts = {
         headers: { 'Content-Type': 'application/json', ...options.headers },
         ...options
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Something went wrong');
-    return data;
+    };
+    if (opts.body && typeof opts.body === 'object') {
+        opts.body = JSON.stringify(opts.body);
+    }
+    
+    try {
+        const res = await fetch(url, opts);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
+    } catch (err) {
+        console.error('API Error:', err.message);
+        throw err;
+    }
 }
 
-// Auth API
+// Auth helpers
+function getToken() { return localStorage.getItem('amble_token'); }
+function getAdminToken() { return localStorage.getItem('amble_admin_token'); }
+function setToken(t) { localStorage.setItem('amble_token', t); }
+function setAdminToken(t) { localStorage.setItem('amble_admin_token', t); }
+
+// API Methods
 const AuthAPI = {
-    register: (userData) => api('/api/register', { method: 'POST', body: JSON.stringify(userData) }),
-    login: (credentials) => api('/api/login', { method: 'POST', body: JSON.stringify(credentials) }),
-    adminLogin: (credentials) => api('/api/admin/login', { method: 'POST', body: JSON.stringify(credentials) })
+    register: (d) => api('/api/register', { method: 'POST', body: d }),
+    login: (d) => api('/api/login', { method: 'POST', body: d }),
+    adminLogin: (d) => api('/api/admin/login', { method: 'POST', body: d })
 };
 
-// Product API
 const ProductAPI = {
     getAll: () => api('/api/products'),
-    add: (product, token) => api('/api/products', { 
-        method: 'POST', 
-        body: JSON.stringify(product),
-        headers: { 'Authorization': `Bearer ${token}` }
-    }),
-    update: (id, product, token) => api(`/api/products/${id}`, { 
-        method: 'PUT', 
-        body: JSON.stringify(product),
-        headers: { 'Authorization': `Bearer ${token}` }
-    }),
-    delete: (id, token) => api(`/api/products/${id}`, { 
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-    })
+    add: (d) => api('/api/products', { method: 'POST', body: d, headers: { 'Authorization': `Bearer ${getAdminToken()}` } }),
+    update: (id, d) => api(`/api/products/${id}`, { method: 'PUT', body: d, headers: { 'Authorization': `Bearer ${getAdminToken()}` } }),
+    delete: (id) => api(`/api/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${getAdminToken()}` } })
 };
 
-// Order API
 const OrderAPI = {
-    create: (orderData) => api('/api/orders', { method: 'POST', body: JSON.stringify(orderData) }),
-    getMyOrders: (userId) => api(`/api/orders/my/${userId}`),
-    getAll: (token) => api('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } }),
-    updateStatus: (orderId, status, token) => api(`/api/orders/${orderId}/status`, { 
-        method: 'PUT', 
-        body: JSON.stringify({ status }),
-        headers: { 'Authorization': `Bearer ${token}` }
+    create: (d) => api('/api/orders', { method: 'POST', body: d }),
+    getMine: (uid) => api(`/api/orders/my/${uid}`),
+    getAll: () => api('/api/orders', { headers: { 'Authorization': `Bearer ${getAdminToken()}` } }),
+    updateStatus: (id, status) => api(`/api/orders/${id}/status`, { 
+        method: 'PUT', body: { status }, headers: { 'Authorization': `Bearer ${getAdminToken()}` } 
     })
 };
