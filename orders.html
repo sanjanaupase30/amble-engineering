@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+          <div class="logo">
+    <img src="images/logo.svg" alt="Amble Engineering Works" height="45">
+</div>
+            <nav class="navbar">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="header-icons">
+                <a href="cart.html" class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner" style="padding:50px 20px;">
+        <h1>My Orders</h1>
+        <p>Track your order history and status</p>
+    </section>
+
+    <section class="orders-section">
+        <div class="container">
+            <div id="orders-list">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col"><h3>Amble Engineering Works</h3><p>Your trusted partner for industrial machinery.</p></div>
+                <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="products.html">Products</a></li><li><a href="about.html">About Us</a></li></ul></div>
+                <div class="footer-col"><h4>Contact</h4><p><i class="fas fa-phone"></i> +91-XXXXXXXXXX</p></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Amble Engineering Works.</p></div>
+        </div>
+    </footer>
+<script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Redirect if not logged in
+        if (!isUserLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

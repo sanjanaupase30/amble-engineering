@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box" style="border-top:4px solid #e74c3c;">
+            <div class="auth-logo">
+                <i class="fas fa-user-shield" style="color:#e74c3c;"></i>
+                <h2>Admin Portal</h2>
+            </div>
+            <h3>Shop Owner Login</h3>
+            <p style="color:#e74c3c;font-size:0.85rem;"><i class="fas fa-lock"></i> Authorized personnel only</p>
+            
+            <form id="admin-login-form" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label><i class="fas fa-user-shield"></i> Username</label>
+                    <input type="text" id="admin-user" placeholder="Enter admin username" autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="admin-pass" placeholder="Enter admin password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('admin-pass', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="admin-form-error" class="form-error-banner" style="display:none;"></div>
+                
+                <button type="submit" class="btn-primary" style="width:100%;background:#e74c3c;">
+                    <i class="fas fa-sign-in-alt"></i> Login as Admin
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
+            </div>
+        </div>
+    </div>
+<script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        if (isAdminLoggedIn()) {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        attachRealtimeValidation('admin-user', ValidationRules.adminUsername);
+
+        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearAllErrors('admin-login-form');
+            
+            const username = document.getElementById('admin-user').value;
+            const password = document.getElementById('admin-pass').value;
+            
+            const userCheck = ValidationRules.adminUsername(username);
+            if (!userCheck.valid) {
+                showFieldError('admin-user', userCheck.message);
+                return;
+            }
+            
+            if (!password) {
+                showFieldError('admin-pass', 'Password is required');
+                return;
+            }
+            
+            const result = loginAdmin(username, password);
+            if (result.success) {
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                const banner = document.getElementById('admin-form-error');
+                banner.textContent = result.message;
+                banner.style.display = 'block';
+                if (result.field) showFieldError(result.field, result.message);
+            }
+        });
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

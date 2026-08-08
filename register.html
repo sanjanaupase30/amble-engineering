@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fas fa-cogs"></i>
+                <h2>Amble Engineering</h2>
+            </div>
+            <h3>Create Account</h3>
+            <p>Register to start buying industrial machinery</p>
+            
+            <!-- Google Sign Up -->
+            <div id="g_id_onload" data-client_id="Y408600481869-r1jgvbj4sq2dvod5is8o9hk5k1t4agh3.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signup_with" data-shape="rectangular" data-logo_alignment="left" data-width="100%"></div>
+            
+            <div class="auth-divider"><span>or register with email</span></div>
+            
+            <form id="register-form" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="reg-name" placeholder="e.g. Rajesh Patil" autocomplete="name">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone</label>
+                    <div class="otp-input-group">
+                        <input type="tel" id="reg-phone" placeholder="9876543210" autocomplete="tel" style="flex:1;">
+                        <button type="button" class="btn-otp" id="btn-send-otp" onclick="handleSendOTP()">Send OTP</button>
+                    </div>
+                    <small class="field-hint">Enter 10-digit mobile number</small>
+                </div>
+                
+                <!-- OTP Verification Section -->
+                <div class="form-group" id="otp-section" style="display:none;">
+                    <label><i class="fas fa-shield-alt"></i> Enter OTP</label>
+                    <div class="otp-input-group">
+                        <input type="text" id="reg-otp" placeholder="6-digit OTP" maxlength="6" style="flex:1;">
+                        <button type="button" class="btn-otp btn-verify" id="btn-verify-otp" onclick="handleVerifyOTP()">Verify</button>
+                    </div>
+                    <small class="field-hint" id="otp-status" style="color:var(--success);"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="reg-password" placeholder="Min 6 chars, 1 letter & 1 number" autocomplete="new-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small class="field-hint">At least 6 characters with 1 letter and 1 number</small>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="reg-confirm" placeholder="Re-enter password" autocomplete="new-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('reg-confirm', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="register-form-error" class="form-error-banner" style="display:none;"></div>
+                
+                <button type="submit" class="btn-primary" style="width:100%;" id="btn-register" disabled>
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+                <p style="margin-top:10px;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+
+    <script src="js/auth.js"></script>
+    <script>
+        let otpVerified = false;
+        let registeredEmail = '';
+        let registeredPhone = '';
+
+        attachRealtimeValidation('reg-name', ValidationRules.name);
+        attachRealtimeValidation('reg-email', ValidationRules.email);
+        attachRealtimeValidation('reg-phone', ValidationRules.phone);
+        attachRealtimeValidation('reg-password', ValidationRules.password);
+
+        function handleSendOTP() {
+            clearFieldError('reg-phone');
+            const phone = document.getElementById('reg-phone').value;
+            const email = document.getElementById('reg-email').value;
+            
+            const phoneCheck = ValidationRules.phone(phone);
+            if (!phoneCheck.valid) {
+                showFieldError('reg-phone', phoneCheck.message);
+                return;
+            }
+            
+            const emailCheck = ValidationRules.email(email);
+            if (!emailCheck.valid) {
+                showFieldError('reg-email', 'Please enter a valid email first');
+                return;
+            }
+            
+            registeredEmail = email.trim().toLowerCase();
+            registeredPhone = phoneCheck.cleaned;
+            
+            document.getElementById('otp-section').style.display = 'block';
+            document.getElementById('btn-send-otp').textContent = 'Resend OTP';
+            document.getElementById('btn-send-otp').disabled = true;
+            
+            sendOTPSimulation(registeredEmail, registeredPhone);
+            
+            setTimeout(() => {
+                document.getElementById('btn-send-otp').disabled = false;
+            }, 30000); // 30 sec cooldown
+        }
+
+        function handleVerifyOTP() {
+            clearFieldError('reg-otp');
+            const otp = document.getElementById('reg-otp').value;
+            const otpCheck = ValidationRules.otp(otp);
+            
+            if (!otpCheck.valid) {
+                showFieldError('reg-otp', otpCheck.message);
+                return;
+            }
+            
+            const result = verifyOTP(registeredEmail, otp);
+            if (result.valid) {
+                otpVerified = true;
+                document.getElementById('otp-status').textContent = '✓ OTP Verified';
+                document.getElementById('reg-otp').classList.add('input-success');
+                document.getElementById('btn-register').disabled = false;
+                document.getElementById('btn-verify-otp').textContent = 'Verified';
+                document.getElementById('btn-verify-otp').style.background = 'var(--success)';
+            } else {
+                showFieldError('reg-otp', result.message);
+            }
+        }
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearAllErrors('register-form');
+            
+            if (!otpVerified) {
+                const banner = document.getElementById('register-form-error');
+                banner.textContent = 'Please verify OTP before registering.';
+                banner.style.display = 'block';
+                return;
+            }
+            
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+            
+            const nameCheck = ValidationRules.name(name);
+            const emailCheck = ValidationRules.email(email);
+            const passCheck = ValidationRules.password(password);
+            const confirmCheck = ValidationRules.confirmPassword(password, confirm);
+            
+            let hasError = false;
+            if (!nameCheck.valid) { showFieldError('reg-name', nameCheck.message); hasError = true; }
+            if (!emailCheck.valid) { showFieldError('reg-email', emailCheck.message); hasError = true; }
+            if (!passCheck.valid) { showFieldError('reg-password', passCheck.message); hasError = true; }
+            if (!confirmCheck.valid) { showFieldError('reg-confirm', confirmCheck.message); hasError = true; }
+            
+            if (hasError) return;
+            
+            const result = registerUser(name, email, registeredPhone, password);
+            if (result.success) {
+                alert(result.message);
+                window.location.href = 'login.html';
+            } else {
+                const banner = document.getElementById('register-form-error');
+                banner.textContent = result.message;
+                banner.style.display = 'block';
+                if (result.field) showFieldError(result.field, result.message);
+            }
+        });
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function handleGoogleSignIn(response) {
+            const credential = response.credential;
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+            const result = registerGoogleUser(payload.name, payload.email, payload.sub);
+            if (result.success) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Google sign-in failed. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+    <img src="images/logo.svg" alt="Amble Engineering Works" height="45">
+</div>
+            <nav class="navbar">
+                <a href="index.html">Home</a>
+                <a href="products.html" class="active">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+                <a href="admin-login.html" style="color:#e74c3c;"><i class="fas fa-user-shield"></i> Admin</a>
+            </nav>
+            <div class="header-icons">
+                <a href="cart.html" class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <h1>Our Products</h1>
+        <p>Browse our complete range of industrial machinery and equipment</p>
+    </section>
+
+    <section class="products-section">
+        <div class="container">
+            <div class="products-layout">
+                <!-- Sidebar Filters -->
+                <aside class="sidebar">
+                    <div class="filter-box">
+                        <h3>Categories</h3>
+                        <ul class="filter-list">
+                            <li><label><input type="checkbox" value="heavy"> Heavy Machinery</label></li>
+                            <li><label><input type="checkbox" value="precision"> Precision Tools</label></li>
+                            <li><label><input type="checkbox" value="spare"> Spare Parts</label></li>
+                            <li><label><input type="checkbox" value="lubrication"> Lubrication Systems</label></li>
+                        </ul>
+                    </div>
+                    <div class="filter-box">
+                        <h3>Price Range</h3>
+                        <input type="range" min="1000" max="500000" class="price-range">
+                        <div class="price-labels">
+                            <span>₹1,000</span>
+                            <span>₹5,00,000</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Product Grid -->
+                <div class="products-main">
+                    <div class="products-header">
+                        <p>Showing <span id="product-count">0</span> products</p>
+                        <select class="sort-select">
+                            <option>Sort by: Featured</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Name: A-Z</option>
+                        </select>
+                    </div>
+                    <div class="product-grid" id="all-products">
+                        <!-- Products rendered via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Amble Engineering Works</h3>
+                    <p>Your trusted partner for industrial machinery and engineering solutions.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="admin-login.html">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Industrial Area, Your City</p>
+                    <p><i class="fas fa-phone"></i> +91-XXXXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> info@ambleengineering.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Amble Engineering Works. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+<script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fas fa-cogs"></i>
+                <h2>Amble Engineering</h2>
+            </div>
+            <h3>Customer Login</h3>
+            <p>Login to purchase products and track your orders</p>
+            
+            <!-- Google Sign In -->
+            <div id="g_id_onload" 408600481869-r1jgvbj4sq2dvod5is8o9hk5k1t4agh3.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left" data-width="100%"></div>
+            
+            <div class="auth-divider"><span>or login with email</span></div>
+            
+            <form id="login-form" class="auth-form" novalidate>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+                </div>
+                
+                <div id="login-form-error" class="form-error-banner" style="display:none;"></div>
+                
+                <button type="submit" class="btn-primary" style="width:100%;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.html">Register here</a></p>
+                <p style="margin-top:10px;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+<script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        attachRealtimeValidation('login-email', ValidationRules.email);
+        attachRealtimeValidation('login-password', ValidationRules.password);
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            clearAllErrors('login-form');
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const emailCheck = ValidationRules.email(email);
+            const passCheck = ValidationRules.password(password);
+            
+            let hasError = false;
+            if (!emailCheck.valid) { showFieldError('login-email', emailCheck.message); hasError = true; }
+            if (!passCheck.valid) { showFieldError('login-password', passCheck.message); hasError = true; }
+            if (hasError) return;
+            
+            const result = loginUser(email, password);
+            if (result.success) {
+                const redirect = localStorage.getItem('amble_redirect_after_login') || 'index.html';
+                localStorage.removeItem('amble_redirect_after_login');
+                window.location.href = redirect;
+            } else {
+                const banner = document.getElementById('login-form-error');
+                banner.textContent = result.message;
+                banner.style.display = 'block';
+                if (result.field) showFieldError(result.field, result.message);
+            }
+        });
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Google Sign-In Handler
+        function handleGoogleSignIn(response) {
+            const credential = response.credential;
+            // Decode JWT payload
+            const payload = JSON.parse(atob(credential.split('.')[1]));
+            const result = registerGoogleUser(payload.name, payload.email, payload.sub);
+            if (result.success) {
+                window.location.href = 'index.html';
+            } else {
+                alert('Google sign-in failed. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

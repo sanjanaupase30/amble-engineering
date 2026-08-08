@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+    <img src="images/logo.svg" alt="Amble Engineering Works" height="45">
+</div>
+            <nav class="navbar">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html" class="active">Contact</a>
+                <a href="admin-login.html" style="color:#e74c3c;"><i class="fas fa-user-shield"></i> Admin</a>
+            </nav>
+            <div class="header-icons">
+                <a href="cart.html" class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <h1>Contact Us</h1>
+        <p>Get in touch for quotes, support, or inquiries</p>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info-box">
+                    <h2>Get In Touch</h2>
+                    <p>Have a question or need a custom quote? Reach out to us and our team will respond within 24 hours.</p>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Address</h4>
+                            <p>Amble Engineering Works,Block no 1243/30,NearMahat Weight Bridge,Shivaji Udyam Nagar,Kolhapur-426008,Maharashtra</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+91-9028787979</p>
+                            <p>+91-9028787979</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@ambleengineering.com</p>
+                            <p>sales@ambleengineering.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Working Hours</h4>
+                            <p>Tue - Sun: 9:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-box">
+                    <h2>Send Us a Message</h2>
+                    <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! We will contact you soon.'); this.reset();">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <select>
+                                <option>Inquiry Type</option>
+                                <option>Product Inquiry</option>
+                                <option>Get a Quote</option>
+                                <option>Technical Support</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="5" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Amble Engineering Works</h3>
+                    <p>Your trusted partner for industrial machinery and engineering solutions.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="admin-login.html">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Amble Engineering Works,Block no 1243/30,NearMahat Weight Bridge,Shivaji Udyam Nagar,Kolhapur-426008,Maharashtra</p>
+                    <p><i class="fas fa-phone"></i> +91-9028787979</p>
+                    <p><i class="fas fa-envelope"></i> info@ambleengineering.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Amble Engineering Works. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+<script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

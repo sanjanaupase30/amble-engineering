@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Amble Engineering Works</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+    <img src="images/logo.svg" alt="Amble Engineering Works" height="45">
+</div>
+            <nav class="navbar">
+                <a href="index.html">Home</a>
+                <a href="products.html">Products</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="header-icons">
+                <a href="#" class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="product-detail-section">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a> / <a href="products.html">Products</a> / <span>Product Name</span>
+            </div>
+            <div class="product-detail-grid">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="images/product-placeholder.jpg" alt="Product Image" id="main-img">
+                    </div>
+                    <div class="thumbnail-images">
+                        <img src="images/product-placeholder.jpg" alt="Thumb 1">
+                        <img src="images/product-placeholder.jpg" alt="Thumb 2">
+                        <img src="images/product-placeholder.jpg" alt="Thumb 3">
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1 id="product-name">Industrial Lathe Machine</h1>
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>(24 Reviews)</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price">₹1,25,000</span>
+                        <span class="old-price">₹1,50,000</span>
+                    </div>
+                    <p class="product-description">
+                        High-precision industrial lathe machine suitable for heavy-duty metalworking. 
+                        Features robust construction, variable speed control, and excellent torque output.
+                    </p>
+                    <div class="product-meta">
+                        <p><strong>SKU:</strong> AEW-LATHE-001</p>
+                        <p><strong>Category:</strong> Heavy Machinery</p>
+                        <p><strong>Availability:</strong> <span class="in-stock">In Stock</span></p>
+                    </div>
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                            <input type="number" value="1" min="1" id="qty-input">
+                            <button class="qty-btn" onclick="changeQty(1)">+</button>
+                        </div>
+                        <button class="btn-primary add-to-cart" onclick="addToCart()">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                        <button class="btn-secondary"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Tabs -->
+            <div class="product-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('description')">Description</button>
+                    <button class="tab-btn" onclick="showTab('specifications')">Specifications</button>
+                    <button class="tab-btn" onclick="showTab('reviews')">Reviews</button>
+                </div>
+                <div class="tab-content active" id="description">
+                    <p>Detailed product description goes here. Include all technical details, usage instructions, and benefits.</p>
+                </div>
+                <div class="tab-content" id="specifications">
+                    <table class="specs-table">
+                        <tr><td>Model</td><td>AEW-LATHE-001</td></tr>
+                        <tr><td>Power</td><td>5 HP</td></tr>
+                        <tr><td>Voltage</td><td>440V Three Phase</td></tr>
+                        <tr><td>Weight</td><td>850 kg</td></tr>
+                        <tr><td>Dimensions</td><td>2000 x 900 x 1200 mm</td></tr>
+                    </table>
+                </div>
+                <div class="tab-content" id="reviews">
+                    <p>Customer reviews will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Amble Engineering Works</h3>
+                    <p>Your trusted partner for industrial machinery and engineering solutions.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Industrial Area, Your City</p>
+                    <p><i class="fas fa-phone"></i> +91-XXXXXXXXXX</p>
+                    <p><i class="fas fa-envelope"></i> info@ambleengineering.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Amble Engineering Works. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+<script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+</html>
