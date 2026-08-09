@@ -1,108 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | Amble Engineering Works</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1e293b; --primary-light: #334155; --secondary: #f59e0b;
-            --secondary-dark: #d97706; --light: #f8fafc; --white: #ffffff;
-            --dark: #0f172a; --gray: #64748b; --muted: #94a3b8;
-            --border: #e2e8f0; --radius: 12px; --radius-sm: 8px;
-            --transition: all 0.3s ease;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        }
-        .auth-container { width: 100%; max-width: 420px; padding: 20px; }
-        .auth-box {
-            background: var(--white); border-radius: var(--radius);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1); padding: 40px 32px;
-            border-top: 4px solid #e74c3c;
-        }
-        .auth-logo { text-align: center; margin-bottom: 24px; }
-        .auth-logo i { font-size: 2.5rem; color: #e74c3c; margin-bottom: 10px; display: block; }
-        .auth-logo h2 { font-size: 1.5rem; color: var(--primary); }
-        .auth-box h3 { text-align: center; font-size: 1.2rem; color: var(--dark); margin-bottom: 6px; }
-        .auth-box > p { text-align: center; color: #e74c3c; font-size: 0.85rem; margin-bottom: 24px; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; }
-        .form-group label i { color: var(--secondary); margin-right: 6px; }
-        .form-group input {
-            width: 100%; padding: 12px 14px; border: 2px solid var(--border);
-            border-radius: var(--radius-sm); font-size: 1rem; transition: var(--transition);
-            background: var(--light); color: var(--primary);
-        }
-        .form-group input:focus { outline: none; border-color: var(--secondary); background: var(--white); }
-        .btn-primary {
-            width: 100%; padding: 14px; border: none; border-radius: var(--radius-sm);
-            background: #e74c3c; color: var(--white); font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: var(--transition); display: flex; align-items: center;
-            justify-content: center; gap: 8px;
-        }
-        .btn-primary:hover { background: #c0392b; transform: translateY(-1px); }
-        .auth-footer { text-align: center; margin-top: 24px; }
-        .auth-footer a { color: var(--gray); text-decoration: none; font-size: 0.9rem; }
-        .auth-footer a:hover { color: var(--secondary-dark); }
-        .auth-footer p:last-child { margin-top: 12px; font-size: 0.8rem; color: var(--muted); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login | Amble Engineering Works</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.auth-container{width:100%;max-width:420px;padding:20px}
+.auth-box{background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.1);padding:40px 32px;border-top:4px solid #e74c3c}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo i{font-size:2.5rem;color:#e74c3c;margin-bottom:10px;display:block}
+.auth-logo h2{font-size:1.5rem;color:#1e293b}
+.auth-box h3{text-align:center;font-size:1.2rem;color:#0f172a;margin-bottom:6px}
+.auth-box>p{text-align:center;color:#e74c3c;font-size:.85rem;margin-bottom:24px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.9rem;font-weight:600;color:#1e293b;margin-bottom:6px}
+.form-group label i{color:#f59e0b;margin-right:6px}
+.form-group input{width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:1rem;transition:all .3s;background:#f8fafc;color:#1e293b}
+.form-group input:focus{outline:none;border-color:#f59e0b;background:#fff}
+.btn-primary{width:100%;padding:14px;border:none;border-radius:8px;background:#e74c3c;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:#c0392b;transform:translateY(-1px)}
+.auth-footer{text-align:center;margin-top:24px}
+.auth-footer a{color:#64748b;text-decoration:none;font-size:.9rem}
+.auth-footer a:hover{color:#d97706}
+.auth-footer p:last-child{margin-top:12px;font-size:.8rem;color:#94a3b8}
+</style>
 <base target="_blank">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <div class="auth-logo">
-                <i class="fas fa-user-shield"></i>
-                <h2>Admin Portal</h2>
-            </div>
-            <h3>Shop Owner Login</h3>
-            <p><i class="fas fa-lock"></i> Authorized personnel only</p>
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <i class="fas fa-user-shield"></i>
+            <h2>Admin Portal</h2>
+        </div>
+        <h3>Shop Owner Login</h3>
+        <p><i class="fas fa-lock"></i> Authorized personnel only</p>
 
-            <form id="admin-login-form" class="auth-form">
-                <div class="form-group">
-                    <label><i class="fas fa-user-shield"></i> Username</label>
-                    <input type="text" id="admin-user" placeholder="Enter admin username" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-key"></i> Password</label>
-                    <input type="password" id="admin-pass" placeholder="Enter admin password" required>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-sign-in-alt"></i> Login as Admin
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
-                <p>Default: admin / admin123</p>
+        <form id="admin-login-form" class="auth-form">
+            <div class="form-group">
+                <label><i class="fas fa-user-shield"></i> Username</label>
+                <input type="text" id="admin-user" placeholder="Enter admin username" required>
             </div>
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> Password</label>
+                <input type="password" id="admin-pass" placeholder="Enter admin password" required>
+            </div>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login as Admin
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
+            <p>Default: admin / admin123</p>
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var username = document.getElementById('admin-user').value.trim();
-            var password = document.getElementById('admin-pass').value;
-
-            if (username === 'admin' && password === 'admin123') {
-                localStorage.setItem('amble_admin_session', JSON.stringify({
-                    username: 'admin',
-                    role: 'owner',
-                    loginTime: new Date().toISOString()
-                }));
-                alert('Admin login successful!');
-                window.location.href = 'admin-dashboard.html';
-            } else {
-                alert('Invalid admin credentials!');
-            }
-        });
-    </script>
+<script>
+document.getElementById('admin-login-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var username=document.getElementById('admin-user').value.trim();
+    var password=document.getElementById('admin-pass').value;
+    if(username==='admin'&&password==='admin123'){
+        localStorage.setItem('amble_admin_session',JSON.stringify({username:'admin',role:'owner',loginTime:new Date().toISOString()}));
+        alert('Admin login successful!');
+        window.location.href='admin-dashboard.html';
+    }else{
+        alert('Invalid admin credentials!');
+    }
+});
+</script>
 </body>
 </html>
