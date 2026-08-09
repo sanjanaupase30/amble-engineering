@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="auth-page">
+<html class="auth-page">
     <div class="auth-container">
         <div class="auth-box" style="border-top:4px solid #e74c3c;">
             <div class="auth-logo">
@@ -45,57 +45,42 @@
             </div>
         </div>
     </div>
-<script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        if (isAdminLoggedIn()) {
+<script src="js/auth.js"></script>
+<script>
+    // Hardcoded admin bypass (keep your auth.js too)
+    function loginAdmin(username, password) {
+        if (username.trim() === 'admin' && password === 'admin123') {
+            localStorage.setItem('amble_admin_session', JSON.stringify({ 
+                username: 'admin', 
+                role: 'owner', 
+                loginTime: new Date().toISOString() 
+            }));
+            return { success: true, message: 'Admin login successful!' };
+        }
+        return { success: false, message: 'Invalid admin credentials!' };
+    }
+
+    function isAdminLoggedIn() {
+        return JSON.parse(localStorage.getItem('amble_admin_session') || 'null') !== null;
+    }
+
+    // Redirect if already logged in
+    if (isAdminLoggedIn()) {
+        window.location.href = 'admin-dashboard.html';
+    }
+
+    document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('admin-user').value;
+        const password = document.getElementById('admin-pass').value;
+        
+        const result = loginAdmin(username, password);
+        if (result.success) {
+            alert(result.message);
             window.location.href = 'admin-dashboard.html';
+        } else {
+            alert(result.message);
         }
-
-        attachRealtimeValidation('admin-user', ValidationRules.adminUsername);
-
-        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            clearAllErrors('admin-login-form');
-            
-            const username = document.getElementById('admin-user').value;
-            const password = document.getElementById('admin-pass').value;
-            
-            const userCheck = ValidationRules.adminUsername(username);
-            if (!userCheck.valid) {
-                showFieldError('admin-user', userCheck.message);
-                return;
-            }
-            
-            if (!password) {
-                showFieldError('admin-pass', 'Password is required');
-                return;
-            }
-            
-            const result = loginAdmin(username, password);
-            if (result.success) {
-                window.location.href = 'admin-dashboard.html';
-            } else {
-                const banner = document.getElementById('admin-form-error');
-                banner.textContent = result.message;
-                banner.style.display = 'block';
-                if (result.field) showFieldError(result.field, result.message);
-            }
-        });
-
-        function togglePassword(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-    </script>
-</body>
+    });
+</script>
 </html>
