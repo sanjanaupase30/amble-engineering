@@ -6,7 +6,30 @@
     <title>Register | Amble Engineering Works</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        .otp-section { display: none; animation: fadeIn 0.4s ease; }
+        .otp-section.active { display: block; }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .otp-inputs input {
+            width: 50px; height: 56px; text-align: center; font-size: 1.4rem; font-weight: 700;
+            border: 2px solid var(--border); border-radius: var(--radius-sm);
+            background: var(--light); color: var(--primary); transition: var(--transition);
+        }
+        .otp-inputs input:focus { outline: none; border-color: var(--secondary); background: var(--white); box-shadow: 0 0 0 4px rgba(245,158,11,0.1); }
+        .otp-timer { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+        .otp-timer span { color: var(--secondary-dark); font-weight: 600; }
+        .send-otp-btn { width: 100%; background: var(--primary-light); color: var(--white); margin-top: 8px; }
+        .send-otp-btn:hover { background: var(--primary); }
+        .input-error { border-color: #ef4444 !important; background: #fef2f2 !important; }
+        .input-success { border-color: #10b981 !important; background: #f0fdf4 !important; }
+        .field-error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 6px; display: block; }
+        .form-error-banner { background: #fef2f2; color: #991b1b; padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.9rem; border-left: 3px solid #ef4444; }
+        .form-success-banner { background: #f0fdf4; color: #065f46; padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.9rem; border-left: 3px solid #10b981; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .password-wrapper { position: relative; }
+        .password-wrapper input { width: 100%; padding-right: 45px; }
+        .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; }
+    </style>
 </head>
 <body class="auth-page">
     <div class="auth-container">
@@ -17,208 +40,201 @@
             </div>
             <h3>Create Account</h3>
             <p>Register to start buying industrial machinery</p>
-            
-            <!-- Google Sign Up -->
-            <div id="g_id_onload" data-client_id="Y408600481869-r1jgvbj4sq2dvod5is8o9hk5k1t4agh3.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
-            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signup_with" data-shape="rectangular" data-logo_alignment="left" data-width="100%"></div>
-            
-            <div class="auth-divider"><span>or register with email</span></div>
-            
+
             <form id="register-form" class="auth-form" novalidate>
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Full Name</label>
-                    <input type="text" id="reg-name" placeholder="e.g. Rajesh Patil" autocomplete="name">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Phone</label>
-                    <div class="otp-input-group">
-                        <input type="tel" id="reg-phone" placeholder="9876543210" autocomplete="tel" style="flex:1;">
-                        <button type="button" class="btn-otp" id="btn-send-otp" onclick="handleSendOTP()">Send OTP</button>
+                <!-- STEP 1: Details -->
+                <div id="details-step">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="reg-name" placeholder="Your full name">
                     </div>
-                    <small class="field-hint">Enter 10-digit mobile number</small>
-                </div>
-                
-                <!-- OTP Verification Section -->
-                <div class="form-group" id="otp-section" style="display:none;">
-                    <label><i class="fas fa-shield-alt"></i> Enter OTP</label>
-                    <div class="otp-input-group">
-                        <input type="text" id="reg-otp" placeholder="6-digit OTP" maxlength="6" style="flex:1;">
-                        <button type="button" class="btn-otp btn-verify" id="btn-verify-otp" onclick="handleVerifyOTP()">Verify</button>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email">
                     </div>
-                    <small class="field-hint" id="otp-status" style="color:var(--success);"></small>
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="reg-password" placeholder="Min 6 chars, 1 letter & 1 number" autocomplete="new-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Phone</label>
+                        <input type="tel" id="reg-phone" placeholder="9876543210">
                     </div>
-                    <small class="field-hint">At least 6 characters with 1 letter and 1 number</small>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Create Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="reg-password" placeholder="Min 6 chars, 1 letter & 1 number">
+                            <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-primary send-otp-btn" onclick="requestRegOTP()">
+                        <i class="fas fa-paper-plane"></i> Send Verification OTP
+                    </button>
                 </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Confirm Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="reg-confirm" placeholder="Re-enter password" autocomplete="new-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword('reg-confirm', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
+
+                <!-- STEP 2: OTP Verification -->
+                <div id="otp-step" class="otp-section">
+                    <div id="reg-form-success" class="form-success-banner" style="display:none;"></div>
+                    <div class="form-group">
+                        <label><i class="fas fa-shield-alt"></i> Enter 6-Digit OTP sent to your email</label>
+                        <div class="otp-inputs">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="0">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="1">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="2">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="3">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="4">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="5">
+                        </div>
+                        <input type="hidden" id="reg-otp-full">
+                    </div>
+
+                    <div id="register-form-error" class="form-error-banner" style="display:none;"></div>
+
+                    <button type="button" class="btn-primary" style="width:100%;" onclick="verifyRegOTP()">
+                        <i class="fas fa-user-check"></i> Verify & Register
+                    </button>
+
+                    <div class="otp-timer">OTP expires in <span id="reg-otp-countdown">05:00</span></div>
+
+                    <div style="text-align:center;margin-top:15px;">
+                        <a onclick="resetRegForm()" style="color:var(--steel);font-size:0.9rem;cursor:pointer;"><i class="fas fa-arrow-left"></i> Change details</a>
+                        <span style="color:var(--border);margin:0 8px;">|</span>
+                        <a onclick="requestRegOTP()" style="color:var(--secondary-dark);font-weight:600;font-size:0.9rem;cursor:pointer;">Resend OTP</a>
                     </div>
                 </div>
-                
-                <div id="register-form-error" class="form-error-banner" style="display:none;"></div>
-                
-                <button type="submit" class="btn-primary" style="width:100%;" id="btn-register" disabled>
-                    <i class="fas fa-user-plus"></i> Create Account
-                </button>
             </form>
-            
+
             <div class="auth-footer">
                 <p>Already have an account? <a href="login.html">Login here</a></p>
                 <p style="margin-top:10px;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
             </div>
         </div>
     </div>
-    <script src="js/api.js"></script>
 
     <script src="js/auth.js"></script>
     <script>
-        let otpVerified = false;
-        let registeredEmail = '';
-        let registeredPhone = '';
-
-        attachRealtimeValidation('reg-name', ValidationRules.name);
-        attachRealtimeValidation('reg-email', ValidationRules.email);
-        attachRealtimeValidation('reg-phone', ValidationRules.phone);
-        attachRealtimeValidation('reg-password', ValidationRules.password);
-
-        function handleSendOTP() {
-            clearFieldError('reg-phone');
-            const phone = document.getElementById('reg-phone').value;
-            const email = document.getElementById('reg-email').value;
-            
-            const phoneCheck = ValidationRules.phone(phone);
-            if (!phoneCheck.valid) {
-                showFieldError('reg-phone', phoneCheck.message);
-                return;
-            }
-            
-            const emailCheck = ValidationRules.email(email);
-            if (!emailCheck.valid) {
-                showFieldError('reg-email', 'Please enter a valid email first');
-                return;
-            }
-            
-            registeredEmail = email.trim().toLowerCase();
-            registeredPhone = phoneCheck.cleaned;
-            
-            document.getElementById('otp-section').style.display = 'block';
-            document.getElementById('btn-send-otp').textContent = 'Resend OTP';
-            document.getElementById('btn-send-otp').disabled = true;
-            
-            sendOTPSimulation(registeredEmail, registeredPhone);
-            
-            setTimeout(() => {
-                document.getElementById('btn-send-otp').disabled = false;
-            }, 30000); // 30 sec cooldown
-        }
-
-        function handleVerifyOTP() {
-            clearFieldError('reg-otp');
-            const otp = document.getElementById('reg-otp').value;
-            const otpCheck = ValidationRules.otp(otp);
-            
-            if (!otpCheck.valid) {
-                showFieldError('reg-otp', otpCheck.message);
-                return;
-            }
-            
-            const result = verifyOTP(registeredEmail, otp);
-            if (result.valid) {
-                otpVerified = true;
-                document.getElementById('otp-status').textContent = '✓ OTP Verified';
-                document.getElementById('reg-otp').classList.add('input-success');
-                document.getElementById('btn-register').disabled = false;
-                document.getElementById('btn-verify-otp').textContent = 'Verified';
-                document.getElementById('btn-verify-otp').style.background = 'var(--success)';
-            } else {
-                showFieldError('reg-otp', result.message);
-            }
-        }
-
-        document.getElementById('register-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            clearAllErrors('register-form');
-            
-            if (!otpVerified) {
-                const banner = document.getElementById('register-form-error');
-                banner.textContent = 'Please verify OTP before registering.';
-                banner.style.display = 'block';
-                return;
-            }
-            
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            const confirm = document.getElementById('reg-confirm').value;
-            
-            const nameCheck = ValidationRules.name(name);
-            const emailCheck = ValidationRules.email(email);
-            const passCheck = ValidationRules.password(password);
-            const confirmCheck = ValidationRules.confirmPassword(password, confirm);
-            
-            let hasError = false;
-            if (!nameCheck.valid) { showFieldError('reg-name', nameCheck.message); hasError = true; }
-            if (!emailCheck.valid) { showFieldError('reg-email', emailCheck.message); hasError = true; }
-            if (!passCheck.valid) { showFieldError('reg-password', passCheck.message); hasError = true; }
-            if (!confirmCheck.valid) { showFieldError('reg-confirm', confirmCheck.message); hasError = true; }
-            
-            if (hasError) return;
-            
-            const result = registerUser(name, email, registeredPhone, password);
-            if (result.success) {
-                alert(result.message);
-                window.location.href = 'login.html';
-            } else {
-                const banner = document.getElementById('register-form-error');
-                banner.textContent = result.message;
-                banner.style.display = 'block';
-                if (result.field) showFieldError(result.field, result.message);
-            }
-        });
-
         function togglePassword(inputId, btn) {
             const input = document.getElementById(inputId);
             const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+            if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+            else { input.type = 'password'; icon.className = 'fas fa-eye'; }
+        }
+
+        // OTP auto-focus
+        document.querySelectorAll('.otp-digit').forEach((input, idx, arr) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && idx < arr.length - 1) arr[idx + 1].focus();
+                updateRegOTPFull();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && idx > 0) arr[idx - 1].focus();
+            });
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0,6);
+                paste.split('').forEach((char, i) => { if(arr[i]) arr[i].value = char; });
+                updateRegOTPFull();
+                if(arr[paste.length-1]) arr[paste.length-1].focus();
+            });
+        });
+
+        function updateRegOTPFull() {
+            const digits = Array.from(document.querySelectorAll('.otp-digit')).map(i => i.value).join('');
+            document.getElementById('reg-otp-full').value = digits;
+        }
+
+        let regCountdownInterval;
+
+        function requestRegOTP() {
+            hideFormError('register-form');
+            document.getElementById('reg-form-success').style.display = 'none';
+
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-phone').value;
+            const password = document.getElementById('reg-password').value;
+
+            // Validate all fields
+            const vName = ValidationRules.name(name);
+            if (!vName.valid) { showFieldError('reg-name', vName.message); return; } else { showFieldSuccess('reg-name'); }
+
+            const vEmail = ValidationRules.email(email);
+            if (!vEmail.valid) { showFieldError('reg-email', vEmail.message); return; } else { showFieldSuccess('reg-email'); }
+
+            const vPhone = ValidationRules.phone(phone);
+            if (!vPhone.valid) { showFieldError('reg-phone', vPhone.message); return; } else { showFieldSuccess('reg-phone'); }
+
+            const vPass = ValidationRules.password(password);
+            if (!vPass.valid) { showFieldError('reg-password', vPass.message); return; } else { showFieldSuccess('reg-password'); }
+
+            // Check if email exists
+            const users = getUsers();
+            if (users.find(u => u.email === email.trim().toLowerCase())) {
+                showFieldError('reg-email', 'Email already registered! Please login.');
+                return;
+            }
+
+            sendEmailOTP(email, 'register');
+
+            // Switch to OTP step
+            document.getElementById('details-step').style.display = 'none';
+            document.getElementById('otp-step').classList.add('active');
+            const successBanner = document.getElementById('reg-form-success');
+            successBanner.textContent = `OTP sent to ${email}. Check the notification on the top-right.`;
+            successBanner.style.display = 'block';
+            startRegCountdown(300);
+            setTimeout(() => document.querySelector('.otp-digit').focus(), 300);
+        }
+
+        function verifyRegOTP() {
+            hideFormError('register-form');
+            updateRegOTPFull();
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const otp = document.getElementById('reg-otp-full').value;
+            const name = document.getElementById('reg-name').value;
+            const phoneVal = ValidationRules.phone(document.getElementById('reg-phone').value);
+            const password = document.getElementById('reg-password').value;
+
+            if (otp.length !== 6) {
+                showFormError('register-form', 'Please enter the complete 6-digit OTP.');
+                return;
+            }
+
+            const result = verifyOTP(email, otp);
+            if (!result.valid) {
+                showFormError('register-form', result.message);
+                return;
+            }
+
+            const res = registerUser(name, email, phoneVal.cleaned, password);
+            if (res.success) {
+                alert(res.message);
+                window.location.href = 'login.html';
             } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                showFormError('register-form', res.message);
+                if (res.field) showFieldError(res.field, res.message);
             }
         }
 
-        function handleGoogleSignIn(response) {
-            const credential = response.credential;
-            const payload = JSON.parse(atob(credential.split('.')[1]));
-            const result = registerGoogleUser(payload.name, payload.email, payload.sub);
-            if (result.success) {
-                window.location.href = 'index.html';
-            } else {
-                alert('Google sign-in failed. Please try again.');
-            }
+        function resetRegForm() {
+            clearInterval(regCountdownInterval);
+            document.getElementById('details-step').style.display = 'block';
+            document.getElementById('otp-step').classList.remove('active');
+            document.querySelectorAll('.otp-digit').forEach(i => i.value = '');
+            document.getElementById('reg-otp-full').value = '';
+            document.getElementById('reg-form-success').style.display = 'none';
+            hideFormError('register-form');
+        }
+
+        function startRegCountdown(seconds) {
+            clearInterval(regCountdownInterval);
+            const el = document.getElementById('reg-otp-countdown');
+            let remaining = seconds;
+            const tick = () => {
+                const m = Math.floor(remaining / 60).toString().padStart(2,'0');
+                const s = (remaining % 60).toString().padStart(2,'0');
+                el.textContent = `${m}:${s}`;
+                if (remaining <= 0) { clearInterval(regCountdownInterval); el.textContent = 'Expired'; el.style.color = '#ef4444'; }
+                remaining--;
+            };
+            tick();
+            regCountdownInterval = setInterval(tick, 1000);
         }
     </script>
 </body>

@@ -6,7 +6,30 @@
     <title>Login | Amble Engineering Works</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        .otp-section { display: none; animation: fadeIn 0.4s ease; }
+        .otp-section.active { display: block; }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .otp-inputs input {
+            width: 50px; height: 56px; text-align: center; font-size: 1.4rem; font-weight: 700;
+            border: 2px solid var(--border); border-radius: var(--radius-sm);
+            background: var(--light); color: var(--primary); transition: var(--transition);
+        }
+        .otp-inputs input:focus { outline: none; border-color: var(--secondary); background: var(--white); box-shadow: 0 0 0 4px rgba(245,158,11,0.1); }
+        .otp-timer { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+        .otp-timer span { color: var(--secondary-dark); font-weight: 600; }
+        .send-otp-btn { width: 100%; background: var(--primary-light); color: var(--white); margin-top: 8px; }
+        .send-otp-btn:hover { background: var(--primary); }
+        .back-to-email { text-align: center; margin-top: 15px; }
+        .back-to-email a { color: var(--steel); font-size: 0.9rem; cursor: pointer; }
+        .back-to-email a:hover { color: var(--secondary-dark); }
+        .input-error { border-color: #ef4444 !important; background: #fef2f2 !important; }
+        .input-success { border-color: #10b981 !important; background: #f0fdf4 !important; }
+        .field-error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 6px; display: block; }
+        .form-error-banner { background: #fef2f2; color: #991b1b; padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.9rem; border-left: 3px solid #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body class="auth-page">
     <div class="auth-container">
@@ -16,103 +39,160 @@
                 <h2>Amble Engineering</h2>
             </div>
             <h3>Customer Login</h3>
-            <p>Login to purchase products and track your orders</p>
-            
-            <!-- Google Sign In -->
-            <div id="g_id_onload" 408600481869-r1jgvbj4sq2dvod5is8o9hk5k1t4agh3.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
-            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left" data-width="100%"></div>
-            
-            <div class="auth-divider"><span>or login with email</span></div>
-            
+            <p>Login with Email OTP to purchase products</p>
+
             <form id="login-form" class="auth-form" novalidate>
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
-                </div>
-                
-                <div class="form-group">
-                    <label><i class="fas fa-lock"></i> Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                <!-- STEP 1: Email -->
+                <div id="email-step">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
                     </div>
-                    <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+                    <button type="button" class="btn-primary send-otp-btn" onclick="requestLoginOTP()">
+                        <i class="fas fa-paper-plane"></i> Send OTP
+                    </button>
                 </div>
-                
-                <div id="login-form-error" class="form-error-banner" style="display:none;"></div>
-                
-                <button type="submit" class="btn-primary" style="width:100%;">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
+
+                <!-- STEP 2: OTP -->
+                <div id="otp-step" class="otp-section">
+                    <div class="form-group">
+                        <label><i class="fas fa-shield-alt"></i> Enter 6-Digit OTP</label>
+                        <div class="otp-inputs">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="0">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="1">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="2">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="3">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="4">
+                            <input type="text" maxlength="1" class="otp-digit" data-index="5">
+                        </div>
+                        <input type="hidden" id="login-otp-full">
+                    </div>
+
+                    <div id="login-form-error" class="form-error-banner" style="display:none;"></div>
+
+                    <button type="button" class="btn-primary" style="width:100%;" onclick="verifyLoginOTP()">
+                        <i class="fas fa-sign-in-alt"></i> Verify & Login
+                    </button>
+
+                    <div class="otp-timer">OTP expires in <span id="otp-countdown">05:00</span></div>
+
+                    <div class="back-to-email">
+                        <a onclick="resetLoginForm()"><i class="fas fa-arrow-left"></i> Use different email</a>
+                        <span style="color:var(--border);margin:0 8px;">|</span>
+                        <a onclick="requestLoginOTP()" style="color:var(--secondary-dark);font-weight:600;">Resend OTP</a>
+                    </div>
+                </div>
             </form>
-            
+
             <div class="auth-footer">
                 <p>Don't have an account? <a href="register.html">Register here</a></p>
                 <p style="margin-top:10px;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
             </div>
         </div>
     </div>
-<script src="js/api.js"></script>
+
     <script src="js/auth.js"></script>
     <script>
-        attachRealtimeValidation('login-email', ValidationRules.email);
-        attachRealtimeValidation('login-password', ValidationRules.password);
+        // OTP input auto-focus logic
+        document.querySelectorAll('.otp-digit').forEach((input, idx, arr) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && idx < arr.length - 1) arr[idx + 1].focus();
+                updateOTPFull();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && idx > 0) arr[idx - 1].focus();
+            });
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0,6);
+                paste.split('').forEach((char, i) => { if(arr[i]) arr[i].value = char; });
+                updateOTPFull();
+                if(arr[paste.length-1]) arr[paste.length-1].focus();
+            });
+        });
 
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            clearAllErrors('login-form');
-            
+        function updateOTPFull() {
+            const digits = Array.from(document.querySelectorAll('.otp-digit')).map(i => i.value).join('');
+            document.getElementById('login-otp-full').value = digits;
+        }
+
+        let countdownInterval;
+
+        function requestLoginOTP() {
+            hideFormError('login-form');
             const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            const emailCheck = ValidationRules.email(email);
-            const passCheck = ValidationRules.password(password);
-            
-            let hasError = false;
-            if (!emailCheck.valid) { showFieldError('login-email', emailCheck.message); hasError = true; }
-            if (!passCheck.valid) { showFieldError('login-password', passCheck.message); hasError = true; }
-            if (hasError) return;
-            
-            const result = loginUser(email, password);
-            if (result.success) {
+            const validation = ValidationRules.email(email);
+            if (!validation.valid) {
+                showFieldError('login-email', validation.message);
+                return;
+            }
+
+            // Check if user exists
+            const users = getUsers();
+            if (!users.find(u => u.email === email.trim().toLowerCase())) {
+                showFieldError('login-email', 'No account found with this email. Please register first.');
+                return;
+            }
+
+            clearFieldError('login-email');
+            sendEmailOTP(email, 'login');
+
+            // Switch to OTP step
+            document.getElementById('email-step').style.display = 'none';
+            document.getElementById('otp-step').classList.add('active');
+            startCountdown(300);
+            setTimeout(() => document.querySelector('.otp-digit').focus(), 300);
+        }
+
+        function verifyLoginOTP() {
+            hideFormError('login-form');
+            updateOTPFull();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const otp = document.getElementById('login-otp-full').value;
+
+            if (otp.length !== 6) {
+                showFormError('login-form', 'Please enter the complete 6-digit OTP.');
+                return;
+            }
+
+            const result = verifyOTP(email, otp);
+            if (!result.valid) {
+                showFormError('login-form', result.message);
+                return;
+            }
+
+            const loginResult = loginUser(email);
+            if (loginResult.success) {
                 const redirect = localStorage.getItem('amble_redirect_after_login') || 'index.html';
                 localStorage.removeItem('amble_redirect_after_login');
                 window.location.href = redirect;
             } else {
-                const banner = document.getElementById('login-form-error');
-                banner.textContent = result.message;
-                banner.style.display = 'block';
-                if (result.field) showFieldError(result.field, result.message);
-            }
-        });
-
-        function togglePassword(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                showFormError('login-form', loginResult.message);
             }
         }
 
-        // Google Sign-In Handler
-        function handleGoogleSignIn(response) {
-            const credential = response.credential;
-            // Decode JWT payload
-            const payload = JSON.parse(atob(credential.split('.')[1]));
-            const result = registerGoogleUser(payload.name, payload.email, payload.sub);
-            if (result.success) {
-                window.location.href = 'index.html';
-            } else {
-                alert('Google sign-in failed. Please try again.');
-            }
+        function resetLoginForm() {
+            clearInterval(countdownInterval);
+            document.getElementById('email-step').style.display = 'block';
+            document.getElementById('otp-step').classList.remove('active');
+            document.querySelectorAll('.otp-digit').forEach(i => i.value = '');
+            document.getElementById('login-otp-full').value = '';
+            hideFormError('login-form');
+        }
+
+        function startCountdown(seconds) {
+            clearInterval(countdownInterval);
+            const el = document.getElementById('otp-countdown');
+            let remaining = seconds;
+            const tick = () => {
+                const m = Math.floor(remaining / 60).toString().padStart(2,'0');
+                const s = (remaining % 60).toString().padStart(2,'0');
+                el.textContent = `${m}:${s}`;
+                if (remaining <= 0) { clearInterval(countdownInterval); el.textContent = 'Expired'; el.style.color = '#ef4444'; }
+                remaining--;
+            };
+            tick();
+            countdownInterval = setInterval(tick, 1000);
         }
     </script>
 </body>
